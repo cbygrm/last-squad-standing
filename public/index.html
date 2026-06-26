@@ -37,22 +37,34 @@
   <div class="surv-meter"><div class="surv-fill" id="survFill"></div><span class="surv-of" id="survOf"></span></div>
 </section>
 
-<section class="rail" id="rail" aria-label="Highlights"></section>
+<nav class="tabs" id="tabs" role="tablist">
+  <button class="tab active" data-view="leaderboard" role="tab" aria-selected="true">🏆 Leaderboard</button>
+  <button class="tab" data-view="fixtures" role="tab" aria-selected="false">📅 Fixtures</button>
+</nav>
 
-<main class="board" id="board" aria-live="polite">
-  <div class="loading">Kicking off… loading the latest scores</div>
-</main>
+<div class="view" id="view-leaderboard" role="tabpanel">
+  <section class="rail" id="rail" aria-label="Highlights"></section>
 
-<section class="schedule" id="schedule" aria-label="Upcoming fixtures"></section>
+  <main class="board" id="board" aria-live="polite">
+    <div class="loading">Kicking off… loading the latest scores</div>
+  </main>
 
-<footer class="legend">
-  <div class="legend-title">How points work</div>
-  <ul class="legend-rules">
-    <li><b>Win</b> +3 · <b>Draw</b> +1 per match</li>
-    <li><b>Reach</b> R32 +5 · R16 +8 · QF +13 · SF +21 · Final +34 <span class="muted">(banked, cumulative)</span></li>
-    <li><b>Champion</b> 🏆 +55</li>
-    <li>You're <b class="ok">alive</b> while one of your 2 teams survives · <b class="dead">out</b> 💀 when both are gone</li>
-  </ul>
+  <section class="legend">
+    <div class="legend-title">How points work</div>
+    <ul class="legend-rules">
+      <li><b>Win</b> +3 · <b>Draw</b> +1 per match</li>
+      <li><b>Reach</b> R32 +5 · R16 +8 · QF +13 · SF +21 · Final +34 <span class="muted">(banked, cumulative)</span></li>
+      <li><b>Champion</b> 🏆 +55</li>
+      <li>You're <b class="ok">alive</b> while one of your 2 teams survives · <b class="dead">out</b> 💀 when both are gone</li>
+    </ul>
+  </section>
+</div>
+
+<div class="view" id="view-fixtures" role="tabpanel" hidden>
+  <section class="schedule" id="schedule" aria-label="Upcoming fixtures"></section>
+</div>
+
+<footer class="pagefoot">
   <div class="updated" id="updated"></div>
   <div class="credit">Live data · refreshes itself during matches, rests in between</div>
 </footer>

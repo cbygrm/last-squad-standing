@@ -366,6 +366,26 @@ document.addEventListener("visibilitychange", () => {
 
 function num(v) { const n = parseInt(v, 10); return Number.isFinite(n) ? n : 0; }
 
+/* ---- Tabs: leaderboard / fixtures ---------------------------------------- */
+const VIEWS = { leaderboard: "#view-leaderboard", fixtures: "#view-fixtures" };
+function setView(v) {
+  if (!VIEWS[v]) v = "leaderboard";
+  for (const [k, sel] of Object.entries(VIEWS)) document.querySelector(sel).hidden = k !== v;
+  document.querySelectorAll(".tab").forEach((b) => {
+    const on = b.dataset.view === v;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-selected", on ? "true" : "false");
+  });
+  try { localStorage.setItem("wc-view", v); } catch {}
+}
+document.querySelectorAll(".tab").forEach((b) =>
+  b.addEventListener("click", () => {
+    setView(b.dataset.view);
+    document.querySelector(".tabs").scrollIntoView({ block: "start", behavior: "smooth" });
+  })
+);
+(() => { let v = "leaderboard"; try { v = localStorage.getItem("wc-view") || v; } catch {} setView(v); })();
+
 async function refresh() {
   const b = $("#refresh"); b.classList.add("spin");
   try { await load(); } catch (e) { console.error(e); }
