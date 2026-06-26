@@ -1,0 +1,4 @@
+node_modules/
+.DS_Store
+wc2026_raw.json
+*.log
