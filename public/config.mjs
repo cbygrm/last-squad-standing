@@ -30,7 +30,7 @@ export const DRAW = {
   "Mark":      ["Mexico", "Senegal"],
   "Emily":     ["Paraguay", "Uzbekistan"],
   "Anh":       ["Saudi Arabia", "United States"],
-  "Eo":        ["South Africa", "Uruguay"],
+  "Ed":        ["South Africa", "Uruguay"],
 };
 
 // --- Points ------------------------------------------------------------------
