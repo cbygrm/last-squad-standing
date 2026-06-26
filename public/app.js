@@ -21,6 +21,7 @@ function render() {
   renderBanner();
   renderRail();
   renderBoard();
+  renderSchedule();
   renderFooter();
   if (MODEL.meta.champion) celebrate();
 }
@@ -199,6 +200,101 @@ function kickoffLabel(m) {
   const d = new Date(m.kickoff);
   return d.toLocaleDateString(undefined, { weekday: "short" }) + " " +
     d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+}
+
+/* ---- Schedule / upcoming fixtures ---------------------------------------- */
+let schedExpanded = false;
+const SCHED_LIMIT = 12;
+
+function renderSchedule() {
+  const sec = document.querySelector("#schedule");
+  sec.innerHTML = "";
+  const upcoming = DATA.matches
+    .filter((m) => !m.completed && m.state !== "post")
+    .sort((a, b) => (a.kickoff || "~").localeCompare(b.kickoff || "~"));
+
+  const head = el("div", "sched-head",
+    `<span class="sched-title">📅 Fixtures &amp; kick-off times</span>` +
+    `<span class="sched-count">${upcoming.length ? upcoming.length + " to play" : "all done"}</span>`);
+  sec.append(head);
+
+  if (!upcoming.length) {
+    sec.append(el("div", "sched-empty", "Every match has been played — that's a wrap on World Cup 2026 🏆"));
+    return;
+  }
+
+  const upd = new Date(DATA.updated);
+  const todayKey = dayKey(upd);
+  const tomorrowKey = dayKey(new Date(upd.getTime() + 864e5));
+  const shown = schedExpanded ? upcoming : upcoming.slice(0, SCHED_LIMIT);
+
+  const list = el("div", "sched-list");
+  let lastDay = null;
+  shown.forEach((m) => {
+    const dk = m.kickoff ? dayKey(new Date(m.kickoff)) : "tbd";
+    if (dk !== lastDay) { lastDay = dk; list.append(dayHeader(m.kickoff, todayKey, tomorrowKey)); }
+    list.append(fixtureCard(m));
+  });
+  sec.append(list);
+
+  if (upcoming.length > SCHED_LIMIT) {
+    const btn = el("button", "sched-toggle",
+      schedExpanded ? "Show fewer" : `Show all ${upcoming.length} fixtures ↓`);
+    btn.onclick = () => { schedExpanded = !schedExpanded; renderSchedule(); };
+    sec.append(btn);
+  }
+}
+
+function dayKey(d) { return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
+
+function dayHeader(kickoff, todayKey, tomorrowKey) {
+  const h = el("div", "day-head");
+  if (!kickoff) { h.innerHTML = `<span class="day-name">Date to be confirmed</span>`; return h; }
+  const d = new Date(kickoff);
+  const k = dayKey(d);
+  const name = d.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" });
+  let tag = "";
+  if (k === todayKey) tag = `<span class="day-tag today">Today</span>`;
+  else if (k === tomorrowKey) tag = `<span class="day-tag">Tomorrow</span>`;
+  h.innerHTML = `<span class="day-name">${name}</span>${tag}`;
+  return h;
+}
+
+function fixtureCard(m) {
+  const live = m.state === "in";
+  const card = el("div", "fixture" + (live ? " live" : ""));
+
+  const timeCol = el("div", "fx-time-col");
+  if (live) timeCol.innerHTML = `<span class="live-badge"><span class="live-dot"></span>LIVE</span>`;
+  else timeCol.innerHTML = `<span class="fx-clock">${kickoffTime(m.kickoff)}</span>`;
+  timeCol.append(el("div", "fx-round", ROUNDS[m.round] ? ROUNDS[m.round].short : "—"));
+
+  const teams = el("div", "fx-teams");
+  teams.append(sideRow(m.home, live));
+  teams.append(sideRow(m.away, live));
+
+  card.append(timeCol, teams);
+  return card;
+}
+
+function sideRow(side, live) {
+  const row = el("div", "fx-side");
+  const c = resolveCountry(side.name);
+  const owner = c && ownerOf(c);
+  const flag = side.logo
+    ? `<img class="fx-flag" src="${esc(side.logo)}" alt="" loading="lazy">`
+    : c
+      ? `<span class="fx-flag mono-flag">${esc((side.abbr || side.name).slice(0, 3))}</span>`
+      : `<span class="fx-flag mono-flag tbd">?</span>`; // unresolved bracket placeholder
+  const ownerChip = owner ? `<span class="owner-chip">${esc(owner)}</span>` : "";
+  const score = live ? `<span class="fx-score">${num(side.score)}</span>` : "";
+  row.innerHTML = `${flag}<span class="fx-tname">${esc(side.name)}</span>${ownerChip}${score}`;
+  return row;
+}
+
+function kickoffTime(kickoff) {
+  if (!kickoff) return "TBD";
+  return new Date(kickoff).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
 }
 
 /* ---- Footer -------------------------------------------------------------- */

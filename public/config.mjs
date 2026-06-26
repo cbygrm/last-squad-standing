@@ -53,9 +53,9 @@ export const ROUNDS = {
   "round-of-32":   { order: 1, label: "Round of 32",   short: "R32" },
   "round-of-16":   { order: 2, label: "Round of 16",   short: "R16" },
   "quarterfinals": { order: 3, label: "Quarter-final", short: "QF" },
-  "semifinals":    { order: 4, label: "Semi-final",    short: "SF" },
-  "third-place":   { order: 4, label: "Third Place",   short: "3rd" },
-  "final":         { order: 5, label: "Final",         short: "Final" },
+  "semifinals":     { order: 4, label: "Semi-final",    short: "SF" },
+  "3rd-place-match": { order: 4, label: "Third Place",  short: "3rd" },
+  "final":          { order: 5, label: "Final",         short: "Final" },
 };
 
 // Tournament window (UTC dates) used by the fetcher to sweep the scoreboard.

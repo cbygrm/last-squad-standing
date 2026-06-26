@@ -201,6 +201,58 @@ header, section, main, footer { max-width: 720px; margin-inline: auto; }
 .badge.out { color: #fff; background: var(--magenta); }
 .today { font-family:"Spline Sans Mono"; font-size:10.5px; font-weight:700; color: var(--teal); }
 
+/* --- Schedule / upcoming fixtures ------------------------------------------ */
+.schedule { padding: 22px 14px 4px; }
+.sched-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 12px; padding: 0 2px; }
+.sched-title { font-family: "Anton"; font-size: clamp(17px, 5vw, 22px); text-transform: uppercase; letter-spacing: .04em; }
+.sched-count { font-family: "Spline Sans Mono"; font-size: 11px; font-weight: 700; color: var(--lime); white-space: nowrap; }
+.sched-empty { text-align: center; color: var(--muted); padding: 20px; font-size: 14px; }
+.sched-list { display: flex; flex-direction: column; gap: 7px; }
+
+.day-head {
+  display: flex; align-items: center; gap: 9px;
+  margin: 14px 2px 3px; padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+.day-head:first-child { margin-top: 0; }
+.day-name { font-weight: 800; font-size: 13px; letter-spacing: .02em; color: var(--cream); text-transform: uppercase; }
+.day-tag { font-family: "Spline Sans Mono"; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); padding: 2px 7px; border: 1px solid var(--line); border-radius: 30px; }
+.day-tag.today { color: var(--ink); background: var(--lime); border-color: var(--lime); }
+
+.fixture {
+  display: grid; grid-template-columns: 60px 1fr; align-items: center; gap: 12px;
+  background: linear-gradient(180deg, var(--surface), var(--ink-2));
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  padding: 9px 12px;
+}
+.fixture.live { border-color: var(--magenta); box-shadow: 0 0 0 1px var(--magenta) inset, 0 8px 22px -16px var(--magenta); }
+.fx-time-col { text-align: center; border-right: 1px solid var(--line); padding-right: 10px; }
+.fx-clock { font-family: "Spline Sans Mono"; font-weight: 700; font-size: 15px; color: var(--gold); display: block; line-height: 1.1; }
+.fx-round { font-family: "Spline Sans Mono"; font-size: 9px; font-weight: 700; color: var(--muted-2); text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
+.live-badge { display: inline-flex; align-items: center; gap: 4px; font-family: "Spline Sans Mono"; font-weight: 700; font-size: 11px; color: var(--magenta); }
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--magenta); animation: pulse 1.1s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.7); } }
+
+.fx-teams { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.fx-side { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.fx-flag { width: 19px; height: 19px; border-radius: 50%; object-fit: cover; flex: none; background: #fff2; box-shadow: 0 0 0 1px #0006; }
+.mono-flag { display: grid; place-items: center; font-family: "Spline Sans Mono"; font-size: 7.5px; font-weight: 700; color: var(--muted); background: var(--ink); }
+.fx-tname { font-size: 13.5px; font-weight: 600; color: var(--cream); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.owner-chip {
+  font-size: 10px; font-weight: 700; color: var(--teal);
+  background: #36e0cf18; border: 1px solid #36e0cf33; border-radius: 30px;
+  padding: 1px 7px; white-space: nowrap; flex: none;
+}
+.fx-score { margin-left: auto; font-family: "Spline Sans Mono"; font-weight: 700; font-size: 15px; color: var(--cream); flex: none; }
+
+.sched-toggle {
+  display: block; width: 100%; margin: 12px 0 4px;
+  background: var(--surface); border: 1px solid var(--line); color: var(--cream);
+  font-family: "Hanken Grotesk"; font-weight: 700; font-size: 13px; letter-spacing: .02em;
+  padding: 11px; border-radius: var(--r-md); cursor: pointer; transition: background .2s, border-color .2s;
+}
+.sched-toggle:hover { background: var(--ink-2); border-color: var(--lime); color: var(--lime); }
+
 /* --- Legend / footer ------------------------------------------------------- */
 .legend { padding: 18px; margin: 8px auto 30px; color: var(--muted); }
 .legend-title { font-family:"Anton"; font-size: 14px; color: var(--cream); text-transform: uppercase; letter-spacing:.06em; margin-bottom:8px; }
