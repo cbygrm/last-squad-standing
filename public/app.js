@@ -328,14 +328,52 @@ function celebrate() {
   })();
 }
 
-/* ---- Refresh / boot ------------------------------------------------------- */
+/* ---- Adaptive polling / boot ---------------------------------------------- */
+// data.json itself only changes when the GitHub Action redeploys, so there's no
+// point hammering it. Poll briskly while a match is live, ease off when one is
+// imminent, and go quiet otherwise — and stop entirely in a background tab.
+const POLL = { live: 45000, soon: 120000, idle: 600000 }; // 45s · 2m · 10m
+let pollTimer = null;
+
+function nextDelay() {
+  if (!DATA) return POLL.idle;
+  if (DATA.matches.some((m) => m.state === "in")) return POLL.live;
+  const now = Date.now();
+  const imminent = DATA.matches.some((m) => {
+    if (m.completed || !m.kickoff) return false;
+    const dt = new Date(m.kickoff).getTime() - now;
+    return dt < 30 * 60000 && dt > -2 * 3600000; // kicks off within ~30 min
+  });
+  return imminent ? POLL.soon : POLL.idle;
+}
+
+function scheduleNext() {
+  clearTimeout(pollTimer);
+  if (document.hidden) return;          // background tab: don't poll at all
+  pollTimer = setTimeout(tick, nextDelay());
+}
+async function tick() {
+  try { await load(); } catch (e) { console.error(e); }
+  scheduleNext();
+}
+
+// Returning to the tab: catch up immediately, then resume adaptive polling.
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) { clearTimeout(pollTimer); return; }
+  load().catch(() => {});
+  scheduleNext();
+});
+
 function num(v) { const n = parseInt(v, 10); return Number.isFinite(n) ? n : 0; }
+
 async function refresh() {
   const b = $("#refresh"); b.classList.add("spin");
   try { await load(); } catch (e) { console.error(e); }
   setTimeout(() => b.classList.remove("spin"), 700);
+  scheduleNext();
 }
 $("#refresh").addEventListener("click", refresh);
 
-load().catch((e) => { $("#board").innerHTML = `<div class="loading">Couldn't load scores. ${esc(e.message)}</div>`; });
-setInterval(load, 60000);
+load()
+  .then(scheduleNext)
+  .catch((e) => { $("#board").innerHTML = `<div class="loading">Couldn't load scores. ${esc(e.message)}</div>`; });
